@@ -1,0 +1,48 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip build
+      - run: python -m build  # wheel + sdist into dist/
+      - name: checksums
+        run: |
+          cd dist && sha256sum * > checksums.txt && cat checksums.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  # Opt-in only: a fresh repo has no PyPI Trusted Publisher registered, so an
+  # always-on pypi job fails the FIRST release with invalid-publisher. Gate it
+  # behind the PYPI_PUBLISH repo variable (default unset -> skipped) and
+  # register the Trusted Publisher when you actually want to ship to PyPI.
+  pypi:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') && vars.PYPI_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
