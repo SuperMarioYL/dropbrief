@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "name": "dropbrief",
+  "github": "https://github.com/SuperMarioYL/dropbrief",
+  "host": "dropbrief.lei6393.com",
+  "lang": { "primary": "zh", "toggle": true },
+  "accent": ["#0071E3", "#0A84FF", "#5AC8FA"],
+  "hero": {
+    "eyebrow": { "zh": "信创可用 · 零出站 · 一条命令", "en": "Air-gap ready · Zero egress · One command" },
+    "headline": {
+      "zh": "下载之前先做决策\n一条命令看懂每一次国产模型 drop",
+      "en": "Decide before you download\nOne command to read every CN model drop"
+    },
+    "sub": {
+      "zh": "把「上线没、架构改没、哪个量化能用、值不值得换」这四问压成 60 秒，信创气隙盒子离线也能拿到同样的决策情报。",
+      "en": "Compress the four questions — is it live, did the architecture change, which quant runs, is it worth switching — into 60 seconds. Works offline on air-gapped 信创 boxes too."
+    },
+    "command": "uvx dropbrief brief --offline qwen3.8-27b",
+    "cta": { "zh": "看四问简报", "en": "See the four-question brief" },
+    "ctaGithub": { "zh": "GitHub", "en": "GitHub" },
+    "scroll": { "zh": "向下看四问", "en": "Scroll for the four questions" }
+  },
+  "advantages": [
+    {
+      "title": { "zh": "下载之前先做决策", "en": "Decide before you download" },
+      "body": {
+        "zh": "一次发布要刷几小时 reddit / HuggingFace / ModelScope 才知道上线没、架构改没、哪个量化真能跑、值不值得换。dropbrief 把这四问压成一条命令。",
+        "en": "Every drop costs hours triangulating reddit / HuggingFace / ModelScope to learn if it's live, what changed, which quant runs, whether it's worth switching. dropbrief compresses all four into one command."
+      },
+      "chips": ["› 上线没", "› 架构改没", "› 哪个量化能用", "› 值不值得换"]
+    },
+    {
+      "title": { "zh": "信创气隙也能用", "en": "Works on air-gapped 信创 boxes" },
+      "body": {
+        "zh": "政企气隙环境没有出站，刷发布页这套手动流程结构上做不到。一条 --offline 读预打包快照，零出站拿到同样的一屏决策简报。",
+        "en": "Air-gapped enterprise boxes have no egress, so the manual scrape workflow is structurally impossible. One --offline flag reads a prepacked snapshot — same one-screen brief, zero outbound calls."
+      },
+      "chips": ["› 零出站", "› 预打包快照", "› 信创可用"]
+    },
+    {
+      "title": { "zh": "国产模型四家族", "en": "Four CN model families" },
+      "body": {
+        "zh": "覆盖 Qwen / GLM / DeepSeek / Kimi 的发布、上线状态与量化清单，发布页中途下架（如 Qwen3.8 那波）也能从缓存里调回。",
+        "en": "Covers drops, live status, and quant manifests for Qwen / GLM / DeepSeek / Kimi — and recalls mid-release page takedowns (like the Qwen3.8 wave) from cache."
+      },
+      "chips": ["› Qwen", "› GLM", "› DeepSeek", "› Kimi"]
+    },
+    {
+      "title": { "zh": "15 分钟缓存，不刷不重复抓", "en": "15-minute cache, no re-scraping" },
+      "body": {
+        "zh": "抓回来的发布情报落 15 分钟本地缓存，反复看同一发布不会重复请求；简报写进一个 markdown 文件，方便存档与汇报。",
+        "en": "Fetched drop intel lands in a 15-minute local cache, so re-checking a drop never hammers the sources. The brief writes to a markdown file for archiving and reporting."
+      },
+      "chips": ["› 15min 缓存", "› 一屏简报", "› markdown 存档"]
+    }
+  ],
+  "scene": { "kind": "hub-nodes", "nodes": ["HuggingFace", "ModelScope", "reddit", "Qwen", "GLM", "DeepSeek", "Kimi"] },
+  "cta": {
+    "headline": { "zh": "下次国产模型发布，先跑一条命令", "en": "Next CN model drop, run one command first" },
+    "sub": { "zh": "下载之前就拿到决策简报 —— 信创气隙也能用。", "en": "Get the decision brief before you download — even on air-gapped 信创." },
+    "button": { "zh": "uvx dropbrief brief", "en": "uvx dropbrief brief" }
+  },
+  "footer": { "tag": { "zh": "MIT 开源 · 信创可用", "en": "MIT open source · air-gap ready" } }
+}
