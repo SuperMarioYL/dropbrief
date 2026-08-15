@@ -1,0 +1,89 @@
+{
+  "model_id": "Qwen/Qwen3.8-27B",
+  "family": "qwen3",
+  "fetched_at": "2026-08-15T18:43:56.610110Z",
+  "live_status": {
+    "model_id": "Qwen/Qwen3.8-27B",
+    "repos": [
+      {
+        "surface": "huggingface",
+        "repo": "Qwen/Qwen3.8-27B",
+        "http_status": 200,
+        "live": true,
+        "file_count": 34,
+        "note": "34 files (safetensors shards + config + tokenizer)"
+      },
+      {
+        "surface": "modelscope",
+        "repo": "Qwen/Qwen3.8-27B",
+        "http_status": 200,
+        "live": true,
+        "file_count": 34,
+        "note": "34 files; CN mirror live (page-pull not observed this fetch)"
+      }
+    ],
+    "quant_inventory": [
+      {
+        "kind": "fp8",
+        "repo": "Qwen/Qwen3.8-27B-FP8",
+        "surface": "huggingface",
+        "files": [],
+        "live": true
+      },
+      {
+        "kind": "gguf",
+        "repo": "Qwen/Qwen3.8-27B-GGUF",
+        "surface": "huggingface",
+        "files": [],
+        "live": true
+      },
+      {
+        "kind": "gguf",
+        "repo": "Qwen/Qwen3.8-27B-GGUF",
+        "surface": "modelscope",
+        "files": [],
+        "live": true
+      }
+    ],
+    "fetched_at": "2026-08-15T18:43:56.609888Z",
+    "cache_hit": false
+  },
+  "arch_delta": {
+    "model_id": "Qwen/Qwen3.8-27B",
+    "prior_model_id": "Qwen/Qwen3.6-27B",
+    "changed_fields": [],
+    "unchanged_count": 9,
+    "is_identical_arch": true,
+    "computed_at": "2026-08-15T18:43:56.610098Z"
+  },
+  "quant_inventory": [
+    {
+      "kind": "fp8",
+      "repo": "Qwen/Qwen3.8-27B-FP8",
+      "surface": "huggingface",
+      "files": [],
+      "live": true
+    },
+    {
+      "kind": "gguf",
+      "repo": "Qwen/Qwen3.8-27B-GGUF",
+      "surface": "huggingface",
+      "files": [],
+      "live": true
+    },
+    {
+      "kind": "gguf",
+      "repo": "Qwen/Qwen3.8-27B-GGUF",
+      "surface": "modelscope",
+      "files": [],
+      "live": true
+    }
+  ],
+  "worth_switch": {
+    "verdict": "hold",
+    "rationale": "架构与 Qwen/Qwen3.6-27B 同构，能力增益源于训练而非结构；reconfig 成本低但架构红利为零，按业务需要灰度切换即可，不必抢跑。",
+    "arch_changed": false,
+    "quant_available": true,
+    "reconfig_cost": "low"
+  }
+}

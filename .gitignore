@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.python-version
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.ruff_cache/
+.mypy_cache/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# demo render scratch
+assets/*.tmp.gif
+
+# build scratch — pipeline control files, never shipped
+.builder_prompt.md
+.build_metadata*
+.build_ctx*
+_build_ctx*
+.spawn.*
+.stage_*
+PUBLISH_BLOCKED.md
+BUILD_SETUP_NEXT_STEPS.md
+
+# agent scratch
+.claude/
+CLAUDE.md

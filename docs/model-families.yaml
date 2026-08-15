@@ -1,0 +1,96 @@
+# dropbrief model-family registry
+# CN open-weight model drops tracked by dropbrief (v0.1: Qwen / GLM / DeepSeek / Kimi).
+# Each family lists its drops with the HuggingFace repo, the ModelScope id,
+# the path to the release config.json used for arch-diff, and the *prior* drop
+# that the arch-delta is computed against (the "what changed" baseline).
+#
+# This file is the single source of truth for `dropbrief`. Edit it when a new
+# drop lands; do not hand-edit per-model state in code.
+
+families:
+  - family: qwen3
+    vendor: 阿里巴巴 (Alibaba)
+    homepage: https://qwen.org
+    models:
+      - alias: qwen3.8-27b
+        model_id: Qwen/Qwen3.8-27B
+        hf_repo: Qwen/Qwen3.8-27B
+        modelscope_id: Qwen/Qwen3.8-27B
+        config_path: config.json
+        prior_alias: qwen3.6-27b
+        quants:
+          - kind: fp8
+            repo: Qwen/Qwen3.8-27B-FP8
+            surface: huggingface
+          - kind: gguf
+            repo: Qwen/Qwen3.8-27B-GGUF
+            surface: huggingface
+          - kind: gguf
+            repo: Qwen/Qwen3.8-27B-GGUF
+            surface: modelscope
+      - alias: qwen3.6-27b
+        model_id: Qwen/Qwen3.6-27B
+        hf_repo: Qwen/Qwen3.6-27B
+        modelscope_id: Qwen/Qwen3.6-27B
+        config_path: config.json
+        prior_alias: null
+        quants: []
+
+  - family: glm4
+    vendor: 智谱 AI (Zhipu)
+    homepage: https://github.com/zhipuai
+    models:
+      - alias: glm-4.5
+        model_id: THUDM/GLM-4.5
+        hf_repo: THUDM/GLM-4.5
+        modelscope_id: ZhipuAI/GLM-4.5
+        config_path: config.json
+        prior_alias: glm-4
+        quants:
+          - kind: fp8
+            repo: THUDM/GLM-4.5-FP8
+            surface: huggingface
+      - alias: glm-4
+        model_id: THUDM/GLM-4
+        hf_repo: THUDM/GLM-4
+        modelscope_id: ZhipuAI/GLM-4
+        config_path: config.json
+        prior_alias: null
+        quants: []
+
+  - family: deepseek
+    vendor: DeepSeek
+    homepage: https://www.deepseek.com
+    models:
+      - alias: deepseek-v3
+        model_id: deepseek-ai/DeepSeek-V3
+        hf_repo: deepseek-ai/DeepSeek-V3
+        modelscope_id: deepseek-ai/DeepSeek-V3
+        config_path: config.json
+        prior_alias: deepseek-v2.5
+        quants:
+          - kind: fp8
+            repo: deepseek-ai/DeepSeek-V3
+            surface: huggingface
+      - alias: deepseek-v2.5
+        model_id: deepseek-ai/DeepSeek-V2.5
+        hf_repo: deepseek-ai/DeepSeek-V2.5
+        modelscope_id: deepseek-ai/DeepSeek-V2.5
+        config_path: config.json
+        prior_alias: null
+        quants: []
+
+  - family: kimi
+    vendor: 月之暗面 (Moonshot AI)
+    homepage: https://www.moonshot.cn
+    models:
+      - alias: kimi-k2
+        model_id: moonshotai/Kimi-K2
+        hf_repo: moonshotai/Kimi-K2
+        modelscope_id: moonshot/Kimi-K2
+        config_path: config.json
+        prior_alias: null
+        quants:
+          - kind: fp8
+            repo: moonshotai/Kimi-K2-Instruct-FP8
+            surface: huggingface
