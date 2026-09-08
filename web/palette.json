@@ -1,0 +1,38 @@
+{
+  "mode": "auto",
+  "id": "da56e6-e76aaf-d5acf6-1df2333b0600",
+  "identity": "https://github.com/supermarioyl/dropbrief",
+  "primary": "#da56e6",
+  "secondary": "#e76aaf",
+  "highlight": "#d5acf6",
+  "dark": {
+    "bg": "#0a0712",
+    "panel": "#13101f",
+    "code": "#130d1d",
+    "ink": "#f7eefd",
+    "muted": "#b09cc4",
+    "line": "#381841",
+    "primary": "#da56e6",
+    "secondary": "#e76aaf",
+    "highlight": "#d5acf6",
+    "accent": "#da56e6",
+    "buttonStart": "#b548bf",
+    "buttonEnd": "#b7548b",
+    "buttonText": "#ffffff"
+  },
+  "light": {
+    "bg": "#fef9fe",
+    "panel": "#fdf7fe",
+    "code": "#fcf3fd",
+    "ink": "#251630",
+    "muted": "#705e88",
+    "line": "#f4cbf7",
+    "primary": "#ad44b7",
+    "secondary": "#af5084",
+    "highlight": "#806794",
+    "accent": "#ad44b7",
+    "buttonStart": "#b548bf",
+    "buttonEnd": "#b7548b",
+    "buttonText": "#ffffff"
+  }
+}

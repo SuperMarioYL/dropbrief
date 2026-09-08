@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "dropbrief"
 version = "0.1.0"
-description = "国产大模型发布决策简报工具 — 信创运维一站获取上线/架构变更/量化/是否值得切换"
+description = "Collect registered model-release metadata, compare selected config fields, and read cached or offline release brief snapshots."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"

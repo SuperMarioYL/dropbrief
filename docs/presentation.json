@@ -1,0 +1,78 @@
+{
+  "name": "dropbrief",
+  "tagline": "Keep release facts and configuration changes together.",
+  "architecture": {
+    "title": "How dropbrief works",
+    "nodes": [
+      {
+        "title": "Model registry",
+        "detail": "registry.py"
+      },
+      {
+        "title": "Fetch / snapshot",
+        "detail": "fetch.py; snapshot.py"
+      },
+      {
+        "title": "Config-field diff",
+        "detail": "archdiff.py"
+      },
+      {
+        "title": "Cached brief",
+        "detail": "briefing.py"
+      }
+    ],
+    "edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  "process": {
+    "title": "From input to a useful result",
+    "steps": [
+      {
+        "title": "Load two configs",
+        "detail": "Explicit old and new objects"
+      },
+      {
+        "title": "Select fields",
+        "detail": "Ignore documented noise keys"
+      },
+      {
+        "title": "Report difference",
+        "detail": "hidden_size changes"
+      }
+    ],
+    "result": "The production diff reports hidden_size changing from 128 to 256 while excluding _name_or_path."
+  },
+  "integrations": {
+    "title": "Supported input and output routes",
+    "items": [
+      {
+        "title": "Model YAML",
+        "detail": "Aliases and source repositories"
+      },
+      {
+        "title": "HF / ModelScope HTTP",
+        "detail": "Configured metadata fetch"
+      },
+      {
+        "title": "Config JSON",
+        "detail": "Selected field comparison"
+      },
+      {
+        "title": "Offline snapshots",
+        "detail": "Saved DropBrief JSON"
+      }
+    ]
+  }
+}

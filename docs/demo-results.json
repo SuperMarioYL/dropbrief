@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "source_revision": "53fa141b8c96f09dc73509c6808751bafaeb6bcd",
+  "scope": "Compare two explicit synthetic model configurations with the production field-diff engine; no live release status, deployment compatibility or migration recommendation.",
+  "steps": [
+    {
+      "label": "Recorded run",
+      "body": "Compare two explicit synthetic model configurations with the production field-diff engine; no live release status, deployment compatibility or migration recommendation.",
+      "command": ".venv/bin/python examples/presentation-demo.py",
+      "output": "{\n  \"identical_compared_fields\": false,\n  \"unchanged_fields\": 2,\n  \"changes\": [\n    {\n      \"field\": \"hidden_size\",\n      \"old\": 128,\n      \"new\": 256,\n      \"change\": \"changed\"\n    }\n  ]\n}"
+    }
+  ]
+}
