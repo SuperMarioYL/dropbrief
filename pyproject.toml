@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dropbrief"
-version = "0.1.0"
+version = "0.2.0"
 description = "Collect registered model-release metadata, compare selected config fields, and read cached or offline release brief snapshots."
 readme = "README.md"
 license = "MIT"

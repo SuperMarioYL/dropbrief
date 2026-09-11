@@ -33,6 +33,27 @@ app = typer.Typer(
 console = Console()
 
 
+def _version_callback(value: bool) -> None:
+    if value:
+        from . import __version__
+
+        console.print(f"dropbrief {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def _root(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        help="打印 dropbrief 版本并退出。",
+        callback=_version_callback,
+        is_eager=True,
+    ),
+) -> None:
+    """dropbrief — 国产大模型发布决策简报工具。"""
+
+
 def _resolve(name: str) -> reg.ModelRecord:
     try:
         return reg.load_default().resolve(name)

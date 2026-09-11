@@ -27,7 +27,7 @@ from pathlib import Path
 
 import httpx
 
-from . import CACHE_TTL_SECONDS
+from . import CACHE_TTL_SECONDS, __version__
 from . import LiveStatus, QuantArtifact, RepoStatus
 from .registry import ModelRecord
 
@@ -35,7 +35,8 @@ HUGGINGFACE_API = "https://huggingface.co/api/models/{repo}"
 HUGGINGFACE_CONFIG = "https://huggingface.co/{repo}/resolve/main/{path}"
 MODELSCOPE_API = "https://www.modelscope.cn/api/v1/models/{repo}"
 # A short, honest User-Agent. HF/ModelScope both 403 a bare httpx UA.
-USER_AGENT = "dropbrief/0.1 (+https://github.com/SuperMarioYL/dropbrief)"
+# Derived from __version__ so the UA tracks the lockstep version.
+USER_AGENT = f"dropbrief/{__version__} (+https://github.com/SuperMarioYL/dropbrief)"
 
 DEFAULT_CACHE_DIR = Path(os.environ.get("DROPBRIEF_CACHE_DIR", Path.home() / ".dropbrief" / "cache"))
 
