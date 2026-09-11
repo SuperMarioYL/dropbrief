@@ -120,6 +120,37 @@ def test_fetch_config_returns_parsed_json(tmp_path):
     assert cfg == {"model_type": "qwen3", "hidden_size": 5120}
 
 
+def test_fetch_config_uses_registry_config_path(tmp_path):
+    # The registry's config_path is the single source of truth; a drop that
+    # declares a non-default release config must be fetched from that path,
+    # not the hardcoded default config.json.
+    rec = load_default().resolve("qwen3.8-27b").model_copy(
+        update={"config_path": "config_v2.json"}
+    )
+    seen: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        url = str(request.url)
+        seen.append(url)
+        if url.endswith("config_v2.json"):
+            return httpx.Response(200, json={"model_type": "v2-arch", "hidden_size": 9999})
+        if url.endswith("config.json"):
+            return httpx.Response(200, json={"model_type": "WRONG-DEFAULT-CONFIG"})
+        return httpx.Response(404, text="no route")
+
+    client = httpx.Client(transport=httpx.MockTransport(handler), headers={"User-Agent": "test"})
+    fetcher = Fetcher(client=client, cache=Cache(tmp_path / "cache"))
+
+    cfg = fetcher.fetch_config(rec)
+    assert cfg == {"model_type": "v2-arch", "hidden_size": 9999}
+    assert any(u.endswith("config_v2.json") for u in seen)
+    assert not any(u.endswith("/config.json") for u in seen)
+
+    # repeat call is served from the per-path cache — still one request
+    fetcher.fetch_config(rec)
+    assert len(seen) == 1
+
+
 def test_fetch_config_cached(tmp_path):
     rec = load_default().resolve("qwen3.8-27b")
     fetcher = _fetcher(tmp_path)

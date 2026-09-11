@@ -140,16 +140,19 @@ class Fetcher:
         """Public wrapper used by the CLI's quant-only view."""
         return self._fetch_quant_inventory(record)
 
-    def fetch_config(self, record: ModelRecord, config_path: str = "config.json") -> dict:
+    def fetch_config(self, record: ModelRecord, config_path: str | None = None) -> dict:
         """Fetch the release ``config.json`` from HuggingFace for arch-diff.
 
-        Cached per (model_id, path) under the same 15-min cache.
+        Cached per (model_id, path) under the same 15-min cache. The path
+        defaults to the registry-declared ``record.config_path`` (the single
+        source of truth); the explicit argument stays an override.
         """
-        cache_key = f"config:{record.model_id}:{config_path}"
+        path = config_path or record.config_path
+        cache_key = f"config:{record.model_id}:{path}"
         cached = self._cache.get(cache_key)
         if cached is not None:
             return cached
-        url = HUGGINGFACE_CONFIG.format(repo=record.hf_repo, path=config_path)
+        url = HUGGINGFACE_CONFIG.format(repo=record.hf_repo, path=path)
         data = self._get_json_or_raise(url, expect_kind=dict)
         self._cache.set(cache_key, data)
         return data
