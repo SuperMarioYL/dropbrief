@@ -55,6 +55,7 @@ packages = ["src/dropbrief"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "docs/model-families.yaml" = "dropbrief/data/model-families.yaml"
+"snapshots" = "dropbrief/data/snapshots"
 
 [tool.hatch.build.targets.sdist]
 include = ["src", "docs", "snapshots", "examples", "README.md", "README.en.md", "LICENSE", "VERSION"]
