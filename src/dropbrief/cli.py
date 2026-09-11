@@ -109,7 +109,7 @@ def brief(
     out: Path = typer.Option(Path("."), "--out", "-o", help="简报输出目录。"),
 ) -> None:
     registry = reg.load_default()
-    record = registry.resolve(model)
+    record = _resolve(model)
     family = registry.family_of(record)
 
     if offline:
