@@ -102,7 +102,7 @@ dropbrief status <registered-alias>
 
 ## Configuration
 
-docs/model-families.yaml owns registered model aliases, sources and prior_alias. DROPBRIEF_CACHE_DIR selects the cache; DROPBRIEF_SNAPSHOT_DIR selects saved snapshots. Run offline examples from the source checkout where bundled snapshots are present.
+docs/model-families.yaml owns registered model aliases, sources and prior_alias. DROPBRIEF_CACHE_DIR selects the cache; DROPBRIEF_SNAPSHOT_DIR selects saved snapshots. Offline snapshots ship inside the package, so `dropbrief brief --offline` works from any install.
 
 ## Integrations and responsibilities
 

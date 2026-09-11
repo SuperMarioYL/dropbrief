@@ -130,20 +130,31 @@ def _short(v: Any) -> str:
     return s if len(s) <= 48 else s[:45] + "…"
 
 
-# --- m2 stub: planned extension -------------------------------------------------
+# --- m2 corroboration: reddit identical-architecture finding --------------------
 # The plan's m2 milestone calls for reproducing the reddit /comments/1voblcs
-# "identical architecture" finding end-to-end (fetch prior config from the
-# registry, diff, emit the one-command verdict). compute_arch_delta + summarize
-# already deliver the core of that; the stub below is the *cross-source
-# corroboration* layer (cite the matching reddit thread automatically) that is
-# intentionally NOT implemented in v0.1.
-def reproduce_reddit_finding(_delta: ArchDelta) -> str | None:  # pragma: no cover - m2 stub
-    """m2 stub — planned: auto-cite the reddit thread that the delta matches.
+# "identical architecture" finding in one command. compute_arch_delta +
+# summarize deliver the verdict; this layer auto-cites the matching operator
+# discussion from the registry (offline-safe: no live scrape).
+def reproduce_reddit_finding(delta: ArchDelta) -> str | None:
+    """Auto-cite the community finding that an identical-arch delta reproduces.
 
-    v0.1 ships the diff itself (`dropbrief diff`); cross-referencing the
-    operator-discussion thread is a planned m2 enhancement, not yet wired.
+    Returns a one-line citation when the delta says the architecture is
+    unchanged AND the registry carries a corroborating operator discussion
+    for that drop; None otherwise (changed arch, unknown drop, or no
+    registered finding — silence is the honest answer in all three).
     """
-    raise NotImplementedError("m2 stub: reddit identical-architecture corroboration is a planned extension")
+    if not delta.is_identical_arch:
+        return None
+    from . import registry as reg
+
+    try:
+        record = reg.load_default().resolve(delta.model_id)
+    except KeyError:
+        return None
+    corroboration = record.corroboration
+    if corroboration is None:
+        return None
+    return f"reddit 同构佐证：{corroboration.title} — {corroboration.url}"
 
 
 __all__ = ["flatten", "compute_arch_delta", "summarize", "reproduce_reddit_finding"]

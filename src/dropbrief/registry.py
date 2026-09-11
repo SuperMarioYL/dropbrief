@@ -38,6 +38,19 @@ class QuantSpec(BaseModel):
     surface: str
 
 
+class Corroboration(BaseModel):
+    """A community finding that corroborates an identical-arch delta (m2).
+
+    Carried in model-families.yaml next to the drop it evidences, so the
+    citation rides the same edit workflow operators already use per drop —
+    offline-safe by construction, no live scrape.
+    """
+
+    url: str
+    title: str
+    quote: str = ""
+
+
 class ModelRecord(BaseModel):
     alias: str
     model_id: str
@@ -46,6 +59,7 @@ class ModelRecord(BaseModel):
     config_path: str = "config.json"
     prior_alias: str | None = None
     quants: list[QuantSpec] = Field(default_factory=list)
+    corroboration: Corroboration | None = None
 
 
 class Family(BaseModel):
@@ -122,4 +136,4 @@ def load(path: Path | str) -> Registry:
     return Registry(families)
 
 
-__all__ = ["Registry", "Family", "ModelRecord", "QuantSpec", "load", "load_default"]
+__all__ = ["Registry", "Family", "ModelRecord", "QuantSpec", "Corroboration", "load", "load_default"]

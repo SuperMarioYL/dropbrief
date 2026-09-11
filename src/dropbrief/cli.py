@@ -18,7 +18,7 @@ from rich.console import Console
 from rich.table import Table
 
 from . import registry as reg
-from .archdiff import compute_arch_delta, summarize
+from .archdiff import compute_arch_delta, reproduce_reddit_finding, summarize
 from .briefing import build_brief, render_briefing, write_briefing
 from .fetch import Fetcher
 from .snapshot import load_snapshot
@@ -98,6 +98,9 @@ def diff(model: str) -> None:
         cur_cfg, prior_cfg, model_id=record.model_id, prior_model_id=prior.model_id
     )
     console.print(summarize(delta))
+    citation = reproduce_reddit_finding(delta)
+    if citation:
+        console.print(f"[dim]{citation}[/dim]")
 
 
 @app.command(help="m3 — 生成一屏决策简报 (上线/架构/量化/是否值得切换)，写入 dropbrief-<model>-<date>.md。")

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from dropbrief import ArchDelta, FieldDelta
 from dropbrief.archdiff import compute_arch_delta, flatten, reproduce_reddit_finding, summarize
 
@@ -70,7 +68,19 @@ def test_summarize_changed_lists_fields():
     assert "a" in s
 
 
-def test_reproduce_reddit_finding_is_m2_stub():
-    # The cross-source corroboration layer is intentionally a planned extension.
-    with pytest.raises(NotImplementedError):
-        reproduce_reddit_finding(_delta({"a": 1}, {"a": 1}))
+def test_reproduce_reddit_finding_cites_identical_arch():
+    # The Qwen3.8-27B identical-arch delta reproduces the registered
+    # /r/LocalLLaMA/comments/1voblcs finding — the citation is auto-attached.
+    citation = reproduce_reddit_finding(_delta({"a": 1}, {"a": 1}))
+    assert citation is not None
+    assert "1voblcs" in citation
+    assert "reddit" in citation
+
+
+def test_reproduce_reddit_finding_silent_on_changed_arch():
+    assert reproduce_reddit_finding(_delta({"a": 1}, {"a": 2})) is None
+
+
+def test_reproduce_reddit_finding_silent_on_unregistered_model():
+    delta = compute_arch_delta({"a": 1}, {"a": 1}, "Some/Unknown-Drop", "Some/Prior")
+    assert reproduce_reddit_finding(delta) is None

@@ -87,6 +87,28 @@ def test_render_briefing_has_four_sections_and_verdict():
     assert "Qwen/Qwen3.8-27B" in md
 
 
+def test_render_briefing_embeds_reddit_citation_for_identical_arch():
+    brief = build_brief(
+        load_default().resolve("qwen3.8-27b"),
+        _live(quants_live=True),
+        _delta(identical=True),
+        family="qwen3",
+    )
+    md = render_briefing(brief)
+    assert "1voblcs" in md
+
+
+def test_render_briefing_has_no_citation_for_changed_arch():
+    brief = build_brief(
+        load_default().resolve("qwen3.8-27b"),
+        _live(quants_live=True),
+        _delta(identical=False),
+        family="qwen3",
+    )
+    md = render_briefing(brief)
+    assert "1voblcs" not in md
+
+
 def test_procurement_summary_is_one_line():
     brief = build_brief(
         load_default().resolve("qwen3.8-27b"),

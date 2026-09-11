@@ -129,9 +129,14 @@ def render_briefing(brief: DropBrief) -> str:
 
     # 2. 架构改没
     lines.append("## 2. 架构改没")
+    from .archdiff import reproduce_reddit_finding
     from .archdiff import summarize as _summarize
 
     lines.append(_summarize(arch))
+    citation = reproduce_reddit_finding(arch)
+    if citation:
+        lines.append("")
+        lines.append(f"- {citation}")
     lines.append("")
 
     # 3. 哪个量化能用

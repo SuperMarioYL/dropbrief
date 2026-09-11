@@ -102,7 +102,7 @@ dropbrief status <registered-alias>
 
 ## 配置
 
-docs/model-families.yaml 定义模型别名、源和 prior_alias。DROPBRIEF_CACHE_DIR 指定缓存，DROPBRIEF_SNAPSHOT_DIR 指定保存快照。随仓离线示例应在包含 snapshots 的源码目录运行。
+docs/model-families.yaml 定义模型别名、源和 prior_alias。DROPBRIEF_CACHE_DIR 指定缓存，DROPBRIEF_SNAPSHOT_DIR 指定保存快照。离线快照随包分发，任意安装方式均可运行离线简报。
 
 ## 集成与职责分工
 

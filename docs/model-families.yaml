@@ -28,6 +28,12 @@ families:
           - kind: gguf
             repo: Qwen/Qwen3.8-27B-GGUF
             surface: modelscope
+        # m2 corroboration: the operator finding an identical-arch delta
+        # reproduces — auto-cited by `dropbrief diff` and the briefing.
+        corroboration:
+          url: https://www.reddit.com/r/LocalLLaMA/comments/1voblcs/
+          title: Qwen3.8-27B is architecturally identical to Qwen3.6-27B
+          quote: identical architecture — all the capability gains come from training improvements
       - alias: qwen3.6-27b
         model_id: Qwen/Qwen3.6-27B
         hf_repo: Qwen/Qwen3.6-27B
