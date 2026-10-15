@@ -11,6 +11,8 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
+import pytest
+
 import dropbrief.snapshot as snap
 from dropbrief import DropBrief
 
@@ -50,3 +52,33 @@ def test_load_snapshot_still_falls_back_to_repo_checkout(tmp_path, monkeypatch):
     loaded = snap.load_snapshot("qwen3.8-27b")
     assert loaded.model_id == "Qwen/Qwen3.8-27B"
     assert loaded.arch_delta.is_identical_arch is True
+
+
+def test_load_snapshot_rejects_schema_incomplete_snapshot_with_clean_error(tmp_path, monkeypatch):
+    # A snapshot that exists but does not validate (truncated copy, wrong
+    # schema) fails with a one-line error naming the file — never a raw
+    # pydantic traceback (m10).
+    alias_dir = tmp_path / "qwen3.8-27b"
+    alias_dir.mkdir(parents=True)
+    (alias_dir / "brief.json").write_text(
+        '{"model_id": "Qwen/Qwen3.8-27B", "family": "qwen3"}', encoding="utf-8"
+    )
+    monkeypatch.setattr(snap, "DEFAULT_SNAPSHOT_DIR", tmp_path)
+    monkeypatch.setattr(snap, "PACKAGED_SNAPSHOT_DIR", tmp_path / "no-packaged")
+    monkeypatch.setattr(snap, "SHIPPED_SNAPSHOT_DIR", tmp_path / "no-shipped")
+
+    with pytest.raises(ValueError, match=r"corrupt offline snapshot") as exc_info:
+        snap.load_snapshot("qwen3.8-27b")
+    assert str(alias_dir / "brief.json") in str(exc_info.value)
+
+
+def test_load_snapshot_rejects_invalid_json_snapshot_with_clean_error(tmp_path, monkeypatch):
+    alias_dir = tmp_path / "qwen3.8-27b"
+    alias_dir.mkdir(parents=True)
+    (alias_dir / "brief.json").write_text("{model_id: oops\n", encoding="utf-8")
+    monkeypatch.setattr(snap, "DEFAULT_SNAPSHOT_DIR", tmp_path)
+    monkeypatch.setattr(snap, "PACKAGED_SNAPSHOT_DIR", tmp_path / "no-packaged")
+    monkeypatch.setattr(snap, "SHIPPED_SNAPSHOT_DIR", tmp_path / "no-shipped")
+
+    with pytest.raises(ValueError, match=r"corrupt offline snapshot"):
+        snap.load_snapshot("qwen3.8-27b")

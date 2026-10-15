@@ -65,12 +65,28 @@ def load_snapshot(alias: str, snapshot_dir: Path | str | None = None) -> DropBri
     for base in search:
         candidate = _alias_dir(alias, base) / "brief.json"
         if candidate.exists():
-            return DropBrief.model_validate_json(candidate.read_text(encoding="utf-8"))
+            try:
+                return DropBrief.model_validate_json(candidate.read_text(encoding="utf-8"))
+            except ValueError as exc:
+                # pydantic ValidationError and JSON parse errors both ride
+                # ValueError. An air-gapped snapshot commonly arrives mangled
+                # (truncated email/IM attachment); a clear one-line message is
+                # the only failure mode the operator should ever see.
+                raise ValueError(_corrupt_message(alias, candidate, exc)) from exc
 
     raise FileNotFoundError(
         f"no offline snapshot for '{alias}'. "
-        f"Run `dropbrief brief {alias}` on a connected box first, or ship a "
+        f"Run `dropbrief brief {alias} --save-snapshot` on a connected box first, or ship a "
         f"public snapshot under snapshots/{alias}/brief.json."
+    )
+
+
+def _corrupt_message(alias: str, path: Path, exc: ValueError) -> str:
+    cause = str(exc).splitlines()[0][:160]
+    return (
+        f"corrupt offline snapshot for '{alias}': {path} ({cause}). "
+        f"Re-copy it from a connected box (`dropbrief brief {alias} --save-snapshot`) "
+        f"or delete the file."
     )
 
 
