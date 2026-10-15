@@ -16,7 +16,7 @@ from dropbrief import fetch
 from dropbrief.cli import app
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-EXPECTED = "0.2.0"
+EXPECTED = "0.3.0"
 
 
 def test_version_file():
@@ -43,8 +43,16 @@ def test_site_json_content_version():
 
 def test_changelog_has_both_sections():
     text = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "[0.1.0]" in text
     assert "[0.2.0]" in text
+    assert "[0.3.0]" in text
+
+
+def test_changelog_has_release_link_for_current_version():
+    text = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert (
+        f"[{EXPECTED}]: https://github.com/SuperMarioYL/dropbrief/compare/"
+        in text
+    )
 
 
 def test_cli_version_flag():

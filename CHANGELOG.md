@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.3.0] - 2026-10-16
+
+### Fixed
+
+- The 15-min cache is no longer trusted blindly: a poisoned or schema-drifted
+  cache entry now degrades to a refetch instead of crashing `dropbrief status`
+  with a raw pydantic traceback, and a non-dict config-cache payload no longer
+  feeds `dropbrief diff` a fabricated identical-architecture verdict
+  (`src/dropbrief/fetch.py`).
+- `dropbrief brief --offline` reports a corrupted or mangled snapshot
+  (truncated transfer is the normal air-gap failure) as a one-line error
+  naming the file, instead of a raw pydantic traceback
+  (`src/dropbrief/snapshot.py`).
+
+### Added
+
+- `dropbrief brief --save-snapshot` writes the DropBrief JSON the offline mode
+  reads, closing the documented connected-to-air-gap handoff: previously no
+  CLI command could produce a snapshot, even though the loader's not-found
+  message told operators to run `brief` on a connected box first.
+
+### Changed
+
+- Version lockstep to 0.3.0 across `VERSION`, `pyproject.toml`, `__version__`
+  (which drives `--version` and the fetch `User-Agent`), and
+  `web/site.json` `meta.content_version`.
+
 ## [0.2.0] - 2026-09-11
 
 ### Fixed
@@ -34,3 +61,6 @@
   cache), `dropbrief diff` (config.json arch-delta versus the prior drop),
   `dropbrief brief` (one-screen decision briefing) with `--offline` air-gap
   snapshot support, and the Qwen / GLM / DeepSeek / Kimi model-family registry.
+
+[0.3.0]: https://github.com/SuperMarioYL/dropbrief/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/SuperMarioYL/dropbrief/compare/v0.1.0...v0.2.0

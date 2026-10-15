@@ -24,7 +24,7 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel, Field
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 # Cache time-to-live for fetched live status / quant listings (seconds).
 # Per mvp_plan m1: a 15-minute JSON cache falsifier — "is the drop live" and
