@@ -54,6 +54,16 @@
         "en": "Offline mode can consume a previously saved brief.",
         "zh": "离线模式可读取已有简报。"
       }
+    },
+    {
+      "title": {
+        "en": "Save the offline snapshot",
+        "zh": "保存离线快照"
+      },
+      "body": {
+        "en": "dropbrief brief --save-snapshot writes the JSON the offline mode reads.",
+        "zh": "dropbrief brief --save-snapshot 写入离线模式读取的快照 JSON。"
+      }
     }
   ],
   "demo": {
