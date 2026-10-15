@@ -26,6 +26,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import httpx
+from pydantic import ValidationError
 
 from . import CACHE_TTL_SECONDS, __version__
 from . import LiveStatus, QuantArtifact, RepoStatus
@@ -124,8 +125,14 @@ class Fetcher:
         """
         cache_key = f"live:{record.model_id}"
         cached = self._cache.get(cache_key)
-        if cached is not None:
-            return LiveStatus.model_validate(cached).model_copy(update={"cache_hit": True})
+        if isinstance(cached, dict):
+            try:
+                return LiveStatus.model_validate(cached).model_copy(update={"cache_hit": True})
+            except ValidationError:
+                # Poisoned or schema-drifted entry (torn write, upgrade
+                # residue): the cache is best-effort, so discard it and
+                # refetch rather than crash.
+                pass
 
         repos = [self._probe_hf(record.hf_repo), self._probe_modelscope(record.modelscope_id)]
         quants = self._fetch_quant_inventory(record)
@@ -151,8 +158,10 @@ class Fetcher:
         path = config_path or record.config_path
         cache_key = f"config:{record.model_id}:{path}"
         cached = self._cache.get(cache_key)
-        if cached is not None:
+        if isinstance(cached, dict):
             return cached
+        # A non-dict (or missing) entry is treated as a miss: feeding a
+        # poisoned payload into the arch-diff would fabricate a verdict.
         url = HUGGINGFACE_CONFIG.format(repo=record.hf_repo, path=path)
         data = self._get_json_or_raise(url, expect_kind=dict)
         self._cache.set(cache_key, data)
