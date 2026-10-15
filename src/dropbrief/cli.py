@@ -18,6 +18,7 @@ from rich.console import Console
 from rich.table import Table
 
 from . import registry as reg
+from . import snapshot as snap
 from .archdiff import compute_arch_delta, reproduce_reddit_finding, summarize
 from .briefing import build_brief, render_briefing, write_briefing
 from .fetch import Fetcher
@@ -130,8 +131,19 @@ def brief(
     offline: bool = typer.Option(
         False, "--offline", help="气隙模式：读取已打包快照，零网络出站。"
     ),
+    save_snapshot: bool = typer.Option(
+        False,
+        "--save-snapshot",
+        help="在线模式下同时把 DropBrief JSON 写入默认快照目录，供气隙机器 --offline 读取。",
+    ),
     out: Path = typer.Option(Path("."), "--out", "-o", help="简报输出目录。"),
 ) -> None:
+    if offline and save_snapshot:
+        console.print(
+            "[red]error:[/red]--save-snapshot 只用于在线模式；--offline 本身就在读取快照。"
+        )
+        raise typer.Exit(code=2)
+
     registry = reg.load_default()
     record = _resolve(model)
     family = registry.family_of(record)
@@ -139,7 +151,7 @@ def brief(
     if offline:
         try:
             brief_obj = load_snapshot(record.alias)
-        except FileNotFoundError as exc:
+        except (FileNotFoundError, ValueError) as exc:
             console.print(f"[red]error:[/red] {exc}")
             raise typer.Exit(code=1) from exc
     else:
@@ -165,6 +177,12 @@ def brief(
             cur_cfg, prior_cfg, model_id=record.model_id, prior_model_id=prior.model_id
         )
         brief_obj = build_brief(record, live, delta, family)
+
+    if save_snapshot:
+        snap_path = snap.save_snapshot(
+            brief_obj, record.alias, snapshot_dir=snap.DEFAULT_SNAPSHOT_DIR
+        )
+        console.print(f"[green]✓[/green] 快照已写入：[bold]{snap_path}[/bold]")
 
     path = write_briefing(brief_obj, out_dir=out)
     console.print(f"[green]✓[/green] 简报已写入：[bold]{path}[/bold]")
