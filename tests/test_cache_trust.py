@@ -91,3 +91,61 @@ def test_valid_config_cache_still_hits(tmp_path):
     fetcher = _fetcher(tmp_path)
     fetcher.fetch_config(record)
     assert fetcher.fetch_config(record) == {"model_type": "qwen3", "hidden_size": 5120}
+
+
+def test_non_object_cache_envelope_is_a_miss(tmp_path):
+    # The envelope itself is untrusted: valid JSON that is not an object
+    # (array, string, number) must behave exactly like a missing entry.
+    record = load_default().resolve("qwen3.8-27b")
+    fetcher = _fetcher(tmp_path)
+    key = f"live:{record.model_id}"
+    path = fetcher._cache._path(key)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("[1, 2, 3]", encoding="utf-8")
+
+    status = fetcher.fetch_live_status(record)
+    assert status.cache_hit is False
+    assert isinstance(status.repos, list)
+
+
+def test_non_string_cache_timestamp_is_a_miss(tmp_path):
+    # A numeric/None fetched_at used to raise TypeError out of fromisoformat.
+    record = load_default().resolve("qwen3.8-27b")
+    fetcher = _fetcher(tmp_path)
+    key = f"live:{record.model_id}"
+    path = fetcher._cache._path(key)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        '{"fetched_at": 12345, "data": {"model_id": "Qwen/Qwen3.8-27B"}}',
+        encoding="utf-8",
+    )
+
+    status = fetcher.fetch_live_status(record)
+    assert status.cache_hit is False
+
+
+def test_cache_set_never_raises_on_unusable_dir(tmp_path):
+    # An unwritable cache dir must not turn a successful fetch into a failure.
+    blocked = tmp_path / "cache"
+    blocked.write_text("a regular file where the cache dir would be")
+    record = load_default().resolve("qwen3.8-27b")
+    client = httpx.Client(
+        transport=httpx.MockTransport(_handler), headers={"User-Agent": "test"}
+    )
+    fetcher = Fetcher(client=client, cache=Cache(blocked))
+
+    Cache(blocked).set("k", {"v": 1})  # no exception
+    status = fetcher.fetch_live_status(record)
+    assert status.cache_hit is False
+    assert isinstance(status.repos, list)
+
+
+def test_cache_set_never_raises_on_read_only_dir(tmp_path):
+    ro = tmp_path / "ro"
+    ro.mkdir()
+    ro.chmod(0o500)
+    try:
+        Cache(ro).set("k", {"v": 1})  # no exception
+        assert Cache(ro).get("k") is None
+    finally:
+        ro.chmod(0o700)

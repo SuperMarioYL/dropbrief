@@ -102,10 +102,13 @@ def diff(model: str) -> None:
     registry = reg.load_default()
     prior = registry.prior(record)
     if prior is None:
-        console.print(
-            f"[yellow]注意：[/yellow]{record.alias} 没有注册的前一版本（{record.prior_alias}），无法计算 arch-delta。"
+        detail = (
+            f"前版别名 '{record.prior_alias}' 不在注册表中"
+            if record.prior_alias
+            else "注册表未声明前一版本"
         )
-        raise typer.Exit(code=0)
+        console.print(f"[yellow]注意：[/yellow]{record.alias} {detail}，无法计算 arch-delta。")
+        raise typer.Exit(code=1)
 
     fetcher = Fetcher()
     try:
@@ -184,10 +187,10 @@ def brief(
         )
         console.print(f"[green]✓[/green] 快照已写入：[bold]{snap_path}[/bold]")
 
-    path = write_briefing(brief_obj, out_dir=out)
+    path = write_briefing(brief_obj, out_dir=out, offline=offline)
     console.print(f"[green]✓[/green] 简报已写入：[bold]{path}[/bold]")
     console.print()
-    console.print(render_briefing(brief_obj))
+    console.print(render_briefing(brief_obj, offline=offline))
 
 
 @app.command(help="列出注册表支持的全部模型家族。")

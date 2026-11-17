@@ -111,3 +111,32 @@ def test_brief_save_snapshot_conflicts_with_offline():
     assert "error:" in result.output
     assert "--save-snapshot" in result.output
     assert "Traceback" not in result.output
+
+
+def test_diff_root_drop_exits_1_with_note():
+    # A drop with no registered prior cannot answer "did the architecture
+    # change"; a script must not read exit 0 for an answer never produced.
+    result = runner.invoke(app, ["diff", "kimi-k2"])
+    assert result.exit_code == 1
+    assert "无法计算 arch-delta" in _flat(result.output)
+    assert "None" not in _flat(result.output)
+    assert "Traceback" not in result.output
+
+
+def test_diff_with_prior_still_exits_0(monkeypatch):
+    monkeypatch.setattr("dropbrief.cli.Fetcher", _StubFetcher)
+    result = runner.invoke(app, ["diff", "qwen3.8-27b"])
+    assert result.exit_code == 0, result.output
+    assert "完全一致" in _flat(result.output)
+
+
+def test_brief_offline_labels_the_snapshot(tmp_path, monkeypatch):
+    # An air-gapped brief must not claim a live or cached fetch.
+    monkeypatch.setattr(snap, "DEFAULT_SNAPSHOT_DIR", tmp_path / "no-user-snapshots")
+    result = runner.invoke(
+        app, ["brief", "--offline", "qwen3.8-27b", "--out", str(tmp_path / "md")]
+    )
+    assert result.exit_code == 0, result.output
+    assert "离线快照" in _flat(result.output)
+    assert "实时抓取" not in _flat(result.output)
+    assert "命中 15min 缓存" not in _flat(result.output)

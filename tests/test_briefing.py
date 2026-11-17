@@ -169,3 +169,39 @@ def test_m3_stubs_raise():
         enterprise_signed_snapshot(brief)
     with pytest.raises(NotImplementedError):
         enterprise_worth_switch_model(brief)
+
+
+def test_render_briefing_offline_states_snapshot_provenance():
+    brief = build_brief(
+        load_default().resolve("qwen3.8-27b"),
+        _live(quants_live=True),
+        _delta(identical=True),
+        family="qwen3",
+    )
+    md = render_briefing(brief, offline=True)
+    assert "离线快照" in md
+    assert "实时抓取" not in md
+    assert "命中 15min 缓存" not in md
+
+
+def test_render_briefing_default_keeps_online_provenance():
+    brief = build_brief(
+        load_default().resolve("qwen3.8-27b"),
+        _live(quants_live=True),
+        _delta(identical=True),
+        family="qwen3",
+    )
+    md = render_briefing(brief)
+    assert "实时抓取" in md
+    assert "离线快照" not in md
+
+
+def test_write_briefing_offline_flag_reaches_the_file(tmp_path):
+    brief = build_brief(
+        load_default().resolve("qwen3.8-27b"),
+        _live(quants_live=True),
+        _delta(identical=True),
+        family="qwen3",
+    )
+    path = write_briefing(brief, out_dir=tmp_path, offline=True)
+    assert "离线快照" in path.read_text(encoding="utf-8")

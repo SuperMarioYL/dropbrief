@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.4.0] - 2026-11-18
+
+### Fixed
+
+- The cache envelope is now untrusted as a whole, not just its `data` field:
+  a cache file that is valid JSON but not an envelope object, or whose
+  `fetched_at` is not a string, is a miss instead of a raw traceback out of
+  `dropbrief status`/`diff`/`brief` (`src/dropbrief/fetch.py`).
+- A failed cache write no longer aborts a fetch that already succeeded. A
+  read-only `$HOME` or a locked-down container now runs uncached instead of
+  raising `PermissionError`/`FileExistsError` mid-command
+  (`src/dropbrief/fetch.py`).
+- `dropbrief diff` on a drop with no registered prior version exits 1 (the
+  same contract as `brief` for the identical condition) instead of exit 0
+  with no delta computed, and the note no longer prints a bare `None`
+  (`src/dropbrief/cli.py`).
+
+### Changed
+
+- An offline briefing names its provenance: `dropbrief brief --offline`
+  renders `数据来源 离线快照（无网络出站）` instead of claiming a live or
+  cached fetch. Online briefings keep their existing wording, and the
+  snapshot JSON format is unchanged (`src/dropbrief/briefing.py`,
+  `src/dropbrief/cli.py`).
+- Version lockstep to 0.4.0 across `VERSION`, `pyproject.toml`, `__version__`,
+  and `web/site.json` `meta.content_version`.
+
 ## [0.3.0] - 2026-10-16
 
 ### Fixed
@@ -62,5 +89,6 @@
   `dropbrief brief` (one-screen decision briefing) with `--offline` air-gap
   snapshot support, and the Qwen / GLM / DeepSeek / Kimi model-family registry.
 
+[0.4.0]: https://github.com/SuperMarioYL/dropbrief/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/SuperMarioYL/dropbrief/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/SuperMarioYL/dropbrief/compare/v0.1.0...v0.2.0

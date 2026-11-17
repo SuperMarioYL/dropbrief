@@ -102,17 +102,26 @@ def procurement_summary(brief: DropBrief) -> str:
     )
 
 
-def render_briefing(brief: DropBrief) -> str:
-    """Render the one-screen decision briefing as markdown."""
+def render_briefing(brief: DropBrief, *, offline: bool = False) -> str:
+    """Render the one-screen decision briefing as markdown.
+
+    ``offline`` states where the brief came from: a snapshot read from disk has
+    no network provenance, and claiming a live or cached fetch on an air-gapped
+    artifact would misstate the one thing its reader audits.
+    """
     live = brief.live_status
     arch = brief.arch_delta
     ws = brief.worth_switch
     fetched = brief.fetched_at.strftime("%Y-%m-%d %H:%M UTC")
+    if offline:
+        provenance = "离线快照（无网络出站）"
+    else:
+        provenance = "命中 15min 缓存" if live.cache_hit else "实时抓取"
 
     lines: list[str] = []
     lines.append(f"# dropbrief 简报 — {brief.model_id}")
     lines.append("")
-    lines.append(f"> 家族 **{brief.family}** · 抓取于 {fetched} · 缓存来源 {'命中 15min 缓存' if live.cache_hit else '实时抓取'}")
+    lines.append(f"> 家族 **{brief.family}** · 抓取于 {fetched} · 数据来源 {provenance}")
     lines.append("")
     lines.append(f"> {procurement_summary(brief)}")
     lines.append("")
@@ -161,14 +170,14 @@ def render_briefing(brief: DropBrief) -> str:
     return "\n".join(lines)
 
 
-def write_briefing(brief: DropBrief, out_dir: Path | str = ".") -> Path:
+def write_briefing(brief: DropBrief, out_dir: Path | str = ".", *, offline: bool = False) -> Path:
     """Write the briefing to ``dropbrief-<model>-<date>.md``; return its path."""
     stem = brief.model_id.split("/")[-1].lower().replace("/", "_")
     date = brief.fetched_at.strftime("%Y-%m-%d")
     base = Path(out_dir)
     base.mkdir(parents=True, exist_ok=True)
     out = base / _BRIEFING_NAME.format(stem=stem, date=date)
-    out.write_text(render_briefing(brief), encoding="utf-8")
+    out.write_text(render_briefing(brief, offline=offline), encoding="utf-8")
     return out
 
 

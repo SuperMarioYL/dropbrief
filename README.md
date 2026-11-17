@@ -100,6 +100,8 @@ dropbrief brief --offline qwen3.8-27b
 dropbrief status <registered-alias>
 ```
 
+离线简报在标题行把数据来源标注为“离线快照（无网络出站）”。`dropbrief diff` 在没有注册前一版本的 drop 上以退出码 1 结束，与 `brief` 的同类情形一致。
+
 ## 配置
 
 docs/model-families.yaml 定义模型别名、源和 prior_alias。DROPBRIEF_CACHE_DIR 指定缓存，DROPBRIEF_SNAPSHOT_DIR 指定保存快照。离线快照随包分发，任意安装方式均可运行离线简报。

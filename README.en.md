@@ -100,6 +100,8 @@ dropbrief brief --offline qwen3.8-27b
 dropbrief status <registered-alias>
 ```
 
+An offline brief names its source as an offline snapshot (no network egress) in its header line. `dropbrief diff` exits 1 for a drop with no registered prior version, matching `brief` for the same condition.
+
 ## Configuration
 
 docs/model-families.yaml owns registered model aliases, sources and prior_alias. DROPBRIEF_CACHE_DIR selects the cache; DROPBRIEF_SNAPSHOT_DIR selects saved snapshots. Offline snapshots ship inside the package, so `dropbrief brief --offline` works from any install.

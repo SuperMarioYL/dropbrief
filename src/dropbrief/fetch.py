@@ -61,8 +61,13 @@ class Cache:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             return None
+        # The envelope is the cache's own private format. Anything else (a torn
+        # write, a hand edit, another tool) is a miss, not an error the operator
+        # can act on, so it must not reach the CLI as a traceback.
+        if not isinstance(payload, dict):
+            return None
         ts = payload.get("fetched_at")
-        if not ts:
+        if not isinstance(ts, str) or not ts:
             return None
         try:
             fetched = datetime.fromisoformat(ts)
@@ -75,12 +80,18 @@ class Cache:
         return payload.get("data")
 
     def set(self, key: str, data: dict, fetched_at: datetime | None = None) -> None:
-        self.dir.mkdir(parents=True, exist_ok=True)
         ts = (fetched_at or datetime.now(timezone.utc)).isoformat()
-        self._path(key).write_text(
-            json.dumps({"fetched_at": ts, "data": data}, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        try:
+            self.dir.mkdir(parents=True, exist_ok=True)
+            self._path(key).write_text(
+                json.dumps({"fetched_at": ts, "data": data}, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError:
+            # Best-effort: a read-only home or a locked-down container must not
+            # turn a fetch that already succeeded into a failure. The next run
+            # simply refetches.
+            pass
 
     def clear(self) -> None:
         for p in self.dir.glob("*.json"):
